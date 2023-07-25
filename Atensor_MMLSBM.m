@@ -14,7 +14,6 @@
 %--------------------------------------------------------------------------
 
 
-
 function [A, P, Z, label] = Atensor_MMLSBM(n, K, L, M, c, d, w)
 
 % create random Z matrix (cluster indicator matrix)
@@ -35,7 +34,7 @@ P = zeros(n, n, M);
 Pmat = zeros(n, n, M);
 O = ones(n, n);
 
-%  for l = 1:L    
+for l = 1:M   
     % create random B (L cluster indicator matrices)
     b = rand(K*K, 1)*range([c d])+min([c d]); % create K*K random numbers between c and d
     b = reshape(b, K, K);
@@ -46,12 +45,12 @@ O = ones(n, n);
     Ptemp = Z(:, :, label(l))*B*(Z(:, :, label(l)))';
     Pmat(:,:,m) = triu(Ptemp) - diag(diag(Ptemp));
     P(:,:,m) = Pmat(:,:,m)+(Pmat(:,:,m))';
-end   
-
-for l = 1:L
     m1=label(l);
     AA = binornd(O, Pmat(:,:,m1));    
     A(:,:,l) = AA+AA';
-end
 
+end
+for i = 1:L
+    A(:,:,i) = A(:,:,label(i));
+end
 end
