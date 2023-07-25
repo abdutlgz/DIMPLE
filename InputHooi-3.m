@@ -10,9 +10,11 @@ M = 2;    % Number of groups of layers
 c = 0.4;  % Sparsity parameter for matrix B (minimum value)
 d = 0.8;  % Sparsity parameter for matrix B (maximum value)
 w = 0.5;  % Assortativity parameter
+alpha = 0.5;
 
 % Generating noisy tensor
-[A, P, Z, label] = Atensor_MMLSBM(n, K, L, M, c, d, w);
+[A, P, Z, label] = AGDPG(n, K, L, M, c, d, w, alpha);
+%[A, P, Z, label] = Atensor(n, K, L, M, c, d, w);
 
 % Call the HOOI function
 X = P;
@@ -27,20 +29,23 @@ r3 = M;
 % Calculate del1
 deg = sum(sum(A, 2), 3);  % Node degrees
 % del1 = 2 * sqrt(r1) * max(deg) / sqrt(sum(deg .^ 2));
- del1=10^(-9);
+del1=10^(-9);
+%del1 = 0 ;
 
 % Calculate del3
 neg = sum(sum(A, 1), 2);  % Layer degrees
-% del3 = 2 * sqrt(r3) * max(neg) / sqrt(sum(neg .^ 2));
- del3=10^(-9);
-
-[Xhat, U1hat, U3hat, iter] = hooi(X, r1, r3, tol, maxiter, del1, del3);
+%del3 = 2 * sqrt(r3) * max(neg) / sqrt(sum(neg .^ 2));
+del3=10^(-9);
+%del3 = 0;
+[Xhat, U1hat, U3hat] = hooi(X, r1, r3, tol, maxiter, del1, del3);
 
 % Display the estimated tensor
 % disp('Estimated tensor Xhat:');
 % disp(Xhat);
-disp('Estimation error: tensor Xhat:');
-disp(norm(Xhat-X,'fro')/sqrt(n^2*L));
+disp(size(Xhat));
+disp(size(X));
+%disp('Estimation error: tensor Xhat:');
+%disp(norm(Xhat-X,'fro')/sqrt(n^2*L));
 
 
 
@@ -54,4 +59,4 @@ disp(norm(Xhat-X,'fro')/sqrt(n^2*L));
 % disp(U3hat);
 
 % Display the number of iterations
-fprintf('Number of iterations: %d\n', iter)
+%fprintf('Number of iterations: %d\n', iter)
