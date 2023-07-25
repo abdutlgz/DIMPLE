@@ -32,8 +32,10 @@ function U = Regularize(U, delta)
     % U is the result
     [l, k] = size(U);
     un =  sqrt(sum(U.^2,2)) ;      % vector of row norms
-    und = min(delta*ones(l,1), un)./un;    % minimum of delta and row norms divided by row norms
-    U = U.*(und*ones(1,k));
+    if delta ~= 0
+            und = min(delta*ones(l,1), un)./un;    % minimum of delta and row norms divided by row norms
+            U = U.*(und*ones(1,k));
+    end
 end
 
     for iter = 1:max_iter
@@ -90,13 +92,11 @@ end
         W = Wt;
 
     end
-Xhat = ttm(tensor(X), {Ut', Ut', Wt'}, [1,2,3]);
-U = Ut;
-W = Wt;
-disp(size(Xhat))
+%Xhat = ttm(tensor(X), {Ut', Ut', Wt'}, [1,2,3]);
+%U = Ut;
+%W = Wt;
+disp(Xhat)
 %disp(size(Ut))
 %disp(size(Wt))
 end
-
-
 
