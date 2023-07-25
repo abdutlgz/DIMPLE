@@ -15,7 +15,7 @@
 
 
 
-function [A, P, D, label] = AGDPG(n, K, L, M, c, d, alpha, w)
+function [newA, P, D, label] = AGDPG(n, K, L, M, c, d, alpha, w)
 
 X = zeros(n, K, M);
 
@@ -51,8 +51,6 @@ for l = 1:M
       AA = binornd(O, Pmat); 
 %      AA = Pmat;
       A(:,:,l) = AA+AA';
-end
-
 for i = 1:L
     newA(:,:,i) = A(:,:,label(i));
 end
