@@ -46,9 +46,9 @@ for l = 1:M
     Pmat(:,:,m) = triu(Ptemp) - diag(diag(Ptemp));
     P(:,:,m) = Pmat(:,:,m)+(Pmat(:,:,m))';
     m1=label(l);
-    AA = binornd(O, Pmat(:,:,m1));    
-    A(:,:,l) = AA+AA';
-
+    %AA = binornd(O, Pmat(:,:,m1));    
+    %A(:,:,l) = AA+AA';
+    A(:,:,l) = P(:,:,m1);
 end
 for i = 1:L
     A(:,:,i) = A(:,:,label(i));
