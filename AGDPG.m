@@ -48,9 +48,9 @@ for l = 1:M
     Pmat = triu(Pmat) - diag(diag(Pmat));    
     P(:,:,l) = Pmat+Pmat';
      
-      AA = binornd(O, Pmat); 
-%      AA = Pmat;
-      A(:,:,l) = AA+AA'
+    %AA = binornd(O, Pmat); 
+    AA = Pmat;
+    A(:,:,l) = AA+AA'
 end
 for i = 1:L
     A(:,:,i) = A(:,:,label(i));
