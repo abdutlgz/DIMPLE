@@ -1,51 +1,52 @@
 % Generate a random adjacency tensor
-
-close all
-clear variables
-
-n = 200;   % Number of nodes in each layer
+n = 5;   % Number of nodes in each layer
 K = 2;    % Number of communities in each group of layers
-L = 60;    % Number of layers
+L = 4;    % Number of layers
 M = 2;    % Number of groups of layers
-c = 0.4;  % Sparsity parameter for matrix B (minimum value)
+c = 0.2;  % Sparsity parameter for matrix B (minimum value)
 d = 0.8;  % Sparsity parameter for matrix B (maximum value)
 w = 0.5;  % Assortativity parameter
 alpha = 0.5;
-
+tol = 1e06;  % Tolerance
+max_iter = 500;
+delta1 = 10;
+delta2 = 10;
 % Generating noisy tensor
-[A, P, Z, label] = AGDPG(n, K, L, M, c, d, w, alpha);
-%[A, P, Z, label] = Atensor(n, K, L, M, c, d, w);
+%[A, P, Z, label] = AGDPG(n, K, L, M, c, d, w, alpha);
+[A, P, Z, label] = Atensor_MMLSBM(n, K, L, M, c, d, w);
 
-% Call the HOOI function
+% P, A: n x n x L
+ 
 X = P;
-tol = 1e-6;
-maxiter = 500;
 r1 = 1 + M*(K-1);
 r3 = M;
-% Find true U1 and U3
+% Compute node degrees
+%deg_i = squeeze(sum(sum(A, 2), 3));
 
-%Estimating the regularization parameters del1 and del3:
+% Compute layer degrees
+%neg_l = squeeze(sum(sum(A, 1), 2));
 
-% Calculate del1
-deg = sum(sum(A, 2), 3);  % Node degrees
-% del1 = 2 * sqrt(r1) * max(deg) / sqrt(sum(deg .^ 2));
-del1=10^(-9);
-%del1 = 0 ;
+% Compute delta1
+%delta1 = 2 * sqrt(r1) * max(deg_i) / sqrt(sum(deg_i .^ 2));
 
-% Calculate del3
-neg = sum(sum(A, 1), 2);  % Layer degrees
-%del3 = 2 * sqrt(r3) * max(neg) / sqrt(sum(neg .^ 2));
-del3=10^(-9);
-%del3 = 0;
-[Xhat, U1hat, U3hat] = hooi(X, r1, r3, tol, maxiter, del1, del3);
+% Compute delta2
+%delta2 = 2 * sqrt(r3) * max(neg_l) / sqrt(sum(neg_l .^ 2));
 
-% Display the estimated tensor
-% disp('Estimated tensor Xhat:');
-% disp(Xhat);
-disp(size(Xhat));
-disp(size(X));
-%disp('Estimation error: tensor Xhat:');
-%disp(norm(Xhat-X,'fro')/sqrt(n^2*L));
+% Desired ranks for subspaces
+%ranks = [3, 2];  % Example ranks, adjust as needed
+
+ 
+% Compute HOOI
+[T, U, W] = reg_hooi(X,r1,r3, tol, max_iter, delta1,delta2);
+% Display the factor matrices U1 and U3
+%disp(T);
+%disp(U);
+%disp(W);
+%disp(ttm(tensor(T), {U, U, W}, [1, 2, 3]))
+%disp(X)
+diff = ttm(tensor(T), {U, U, W}, [1, 2, 3]) - tensor(X);
+disp(sqrt(innerprod(diff, diff))); %Frobenius norm
+%whos T
 
 
 
